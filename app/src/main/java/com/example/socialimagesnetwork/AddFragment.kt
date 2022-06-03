@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.socialimagesnetwork.databinding.FragmentAddBinding
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -56,7 +57,28 @@ class AddFragment : Fragment() {
     }
 
     private fun postPhoto(){
-
+        mBinding.progressBar.visibility = View.VISIBLE
+        //mStorageReference.child(PATH_PHOTO).child("my_photo")
+        val storageReference = mStorageReference.child(PATH_PHOTO).child("my_photo")
+        if (mPhotoSelectedUri != null){
+            storageReference.putFile(mPhotoSelectedUri!!)
+                .addOnProgressListener {
+                    val progress = (100 * it.bytesTransferred/it.totalByteCount).toDouble()
+                    mBinding.progressBar.progress = progress.toInt()
+                    mBinding.tvMessage.text = "$progress%"
+                }
+                .addOnCompleteListener{
+                    mBinding.progressBar.visibility = View.INVISIBLE
+                }
+                .addOnSuccessListener {
+                    Snackbar.make(mBinding.root, "Imagen publicada.",
+                        Snackbar.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener{
+                    Snackbar.make(mBinding.root, "No se logro subir la imagen, intente mas tarde.",
+                        Snackbar.LENGTH_SHORT).show()
+                }
+        }
     }
 
     private fun savePhoto(){
@@ -76,5 +98,4 @@ class AddFragment : Fragment() {
             }
         }
     }
-
 }
