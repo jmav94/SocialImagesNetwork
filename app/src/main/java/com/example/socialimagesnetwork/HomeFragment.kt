@@ -1,5 +1,6 @@
 package com.example.socialimagesnetwork
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -70,9 +71,11 @@ class HomeFragment : Fragment() {
 
             }
 
+            @SuppressLint("NotifyDataSetChanged")// Error interno Firebase UI
             override fun onDataChanged() {
                 super.onDataChanged()
                 mBinding.progressBar.visibility = View.GONE
+                notifyDataSetChanged()
             }
 
             override fun onError(error: DatabaseError) {
